@@ -74,7 +74,8 @@ Input JSON structure
 
 Example:
 
-cat > example_inputs.json << 
+'example_inputs.json'
+
 ```json
 {
   "SNPPhylogenomics.input_reads": [
@@ -188,9 +189,9 @@ Recommended:
 Tree output format
 
 The image format is controlled by:
-
+```bash
 "SNPPhylogenomics.tree_image_format": "png"
-
+```
 Supported options:
 
 ```bash
@@ -203,13 +204,13 @@ Supported options:
 Recommended
 
 For reports and dashboards:
-
+```bash
 "SNPPhylogenomics.tree_image_format": "png"
-
+```
 For publication editing:
-
+```bash
 "SNPPhylogenomics.tree_image_format": "svg"
-
+```
 Recommended PNG resolution
 
 For high-quality PNG output:
@@ -255,6 +256,7 @@ Key output files
 Set:
 
 "SNPPhylogenomics.iqtree2_bootstraps": 1000
+
 Gubbins error: AF_UNIX path too long
 
 This can occur when Cromwell creates deeply nested directories. The workflow runs Gubbins from /tmp to avoid this issue.
@@ -287,7 +289,7 @@ Incorrect:
 "sample2_1.fastq.gz"
 Suggested citation text
 
-SNPPhylogenomics is a reproducible WDL/Cromwell workflow for bacterial SNP-based phylogenomics. It integrates Trimmomatic, FastQC, Snippy, snippy-core, Gubbins, IQ-TREE2, and ETE3 to generate recombination-aware maximum-likelihood phylogenies from paired-end whole-genome sequencing data.
+**SNPPhylogenomics** is a reproducible WDL/Cromwell workflow for bacterial SNP-based phylogenomics. It integrates Trimmomatic, FastQC, Snippy, snippy-core, Gubbins, IQ-TREE2, and ETE3 to generate recombination-aware maximum-likelihood phylogenies from paired-end whole-genome sequencing data.
 
 Recommended method description
 
