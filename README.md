@@ -24,8 +24,8 @@ Optional Gubbins recombination filtering
 IQ-TREE2 maximum-likelihood phylogeny
         ↓
 ETE3 tree visualization
----
 
+```
 ## Main outputs
 
 The workflow produces:
