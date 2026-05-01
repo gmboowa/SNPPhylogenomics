@@ -54,15 +54,22 @@ Docker
 
 Example Cromwell command:
 
+```bash
 java -jar ~/cromwell-92.jar run SNPPhylogenomics.wdl --inputs ~/Klebsiella_pneumoniae_phylogeny.json
-Docker images used
-Step	Tool	Docker image
-Trimming	Trimmomatic	staphb/trimmomatic:0.39
-QC	FastQC	staphb/fastqc:0.11.9
-Variant calling	Snippy	staphb/snippy:4.6.0
-Recombination filtering	Gubbins	staphb/gubbins:3.4.1
-Phylogeny	IQ-TREE2	staphb/iqtree2:2.3.4
-Tree visualization	ETE3	gmboowa/ete3-render:1.18
+
+```
+## 🐳 Docker images used
+
+| Step                      | Tool        | Docker image                  |
+|---------------------------|-------------|-------------------------------|
+| Trimming                  | Trimmomatic | staphb/trimmomatic:0.39       |
+| QC                        | FastQC      | staphb/fastqc:0.11.9          |
+| Variant calling           | Snippy      | staphb/snippy:4.6.0           |
+| Recombination filtering   | Gubbins     | staphb/gubbins:3.4.1          |
+| Phylogeny                 | IQ-TREE2    | staphb/iqtree2:2.3.4          |
+| Tree visualization        | ETE3        | gmboowa/ete3-render:1.18      |
+
+---
 Input JSON structure
 
 Example:
