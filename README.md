@@ -28,6 +28,8 @@ IQ-TREE2 maximum-likelihood phylogeny
 ETE3 tree visualization
 </pre>
 </div>
+
+---
 ## Main outputs
 
 The workflow produces:
