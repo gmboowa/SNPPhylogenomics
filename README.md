@@ -254,9 +254,9 @@ Key output files
 | phylogenetic_tree.cleaned.nwk | Cleaned tree used for visualization |
 
 Set:
-
+```bash
 "SNPPhylogenomics.iqtree2_bootstraps": 1000
-
+```
 Gubbins error: AF_UNIX path too long
 
 This can occur when Cromwell creates deeply nested directories. The workflow runs Gubbins from /tmp to avoid this issue.
@@ -268,9 +268,9 @@ If Cromwell reports:
 Unexpected input provided
 
 Check that every JSON key starts with the correct workflow name:
-
+```bash
 "SNPPhylogenomics."
-
+```
 not:
 
 "rMAP."
@@ -279,14 +279,15 @@ JSON parsing error
 Check for missing commas between FASTQ files. Every item must end with a comma except the last item.
 
 Correct:
-
+```bash
 "sample1_2.fastq.gz",
 "sample2_1.fastq.gz"
-
+```
 Incorrect:
-
+```bash
 "sample1_2.fastq.gz"
 "sample2_1.fastq.gz"
+```
 Suggested citation text
 
 **SNPPhylogenomics** is a reproducible WDL/Cromwell workflow for bacterial SNP-based phylogenomics. It integrates Trimmomatic, FastQC, Snippy, snippy-core, Gubbins, IQ-TREE2, and ETE3 to generate recombination-aware maximum-likelihood phylogenies from paired-end whole-genome sequencing data.
