@@ -1,8 +1,8 @@
 # SNPPhylogenomics
 
-**SNPPhylogenomics** is a reproducible, containerized WDL/Cromwell workflow for SNP-based bacterial phylogenomics. It performs read trimming, quality control, reference-based variant calling, core genome alignment generation, optional recombination filtering, maximum-likelihood phylogeny reconstruction, and tree visualization.
+**SNPPhylogenomics** is a reproducible, containerized WDL/Cromwell workflow for SNP-based bacterial phylogenomics. It performs read trimming, quality control, reference-based variant calling, core genome alignment generation, optional recombination filtering, maximum-likelihood phylogeny reconstruction & tree visualization.
 
-The workflow is designed for bacterial whole-genome sequencing data and is especially useful for genomic epidemiology, outbreak investigation, AMR surveillance, and comparative pathogen genomics.
+The workflow is designed for bacterial whole-genome sequencing data & is especially useful for genomic epidemiology, outbreak investigation, AMR surveillance & comparative pathogen genomics.
 
 ---
 
@@ -235,12 +235,12 @@ java -jar ~/cromwell-92.jar run SNPPhylogenomics.wdl --inputs ~/example_inputs.j
 Finding outputs
 
 After completion:
-
+```bash
 find cromwell-executions -name "core.full.aln"
 find cromwell-executions -name "*.treefile"
 find cromwell-executions -name "phylogenetic_tree.png"
 find cromwell-executions -name "phylogenetic_tree.cleaned.nwk"
-
+```
 Key output files
 
 | File | Description |
@@ -272,8 +272,9 @@ Check that every JSON key starts with the correct workflow name:
 "SNPPhylogenomics."
 ```
 not:
-
+```bash
 "rMAP."
+```
 JSON parsing error
 
 Check for missing commas between FASTQ files. Every item must end with a comma except the last item.
@@ -290,7 +291,7 @@ Incorrect:
 ```
 Suggested citation text
 
-**SNPPhylogenomics** is a reproducible WDL/Cromwell workflow for bacterial SNP-based phylogenomics. It integrates Trimmomatic, FastQC, Snippy, snippy-core, Gubbins, IQ-TREE2, and ETE3 to generate recombination-aware maximum-likelihood phylogenies from paired-end whole-genome sequencing data.
+**SNPPhylogenomics** is a reproducible WDL/Cromwell workflow for bacterial SNP-based phylogenomics. It integrates Trimmomatic, FastQC, Snippy, snippy-core, Gubbins, IQ-TREE2 &  ETE3 to generate recombination-aware maximum-likelihood phylogenies from paired-end whole-genome sequencing data.
 
 Recommended method description
 
