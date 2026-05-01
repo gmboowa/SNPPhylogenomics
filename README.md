@@ -1,8 +1,8 @@
 # SNPPhylogenomics
 
-SNPPhylogenomics is a reproducible, containerized WDL/Cromwell workflow for SNP-based bacterial phylogenomics. It performs read trimming, quality control, reference-based variant calling, core-genome alignment generation, optional recombination filtering, maximum-likelihood phylogeny reconstruction, and tree visualization.
+**SNPPhylogenomics** is a reproducible, containerized WDL/Cromwell workflow for SNP-based bacterial phylogenomics. It performs read trimming, quality control, reference-based variant calling, core-genome alignment generation, recombination filtering, maximum-likelihood phylogeny reconstruction & tree visualization.
 
-The workflow is designed for bacterial whole-genome sequencing data and is especially useful for genomic epidemiology, outbreak investigations, antimicrobial resistance surveillance, and comparative pathogen genomics.
+The workflow is designed for bacterial whole-genome sequencing data & is especially useful for genomic epidemiology, outbreak investigations, antimicrobial resistance surveillance & comparative pathogen genomics.
 
 ---
 
@@ -289,10 +289,10 @@ Incorrect:
 "sample1_2.fastq.gz"
 "sample2_1.fastq.gz"
 ```
-Suggested citation text
+Suggested citation 
 
 **SNPPhylogenomics** is a reproducible WDL/Cromwell workflow for bacterial SNP-based phylogenomics. It integrates Trimmomatic, FastQC, Snippy, snippy-core, Gubbins, IQ-TREE2 &  ETE3 to generate recombination-aware maximum-likelihood phylogenies from paired-end whole-genome sequencing data.
 
 Recommended method description
 
-Paired-end reads were trimmed using Trimmomatic and assessed using FastQC. Variants were called against a reference genome using Snippy, and a core genome alignment was generated using snippy-core. Recombinant regions were identified and filtered using Gubbins. A maximum-likelihood phylogeny was inferred using IQ-TREE2 under the selected nucleotide substitution model with ultrafast bootstrap support. The final tree was visualized using ETE3.
+Paired-end reads were trimmed using Trimmomatic & assessed using FastQC. Variants were called against a reference genome using Snippy & a core genome alignment was generated using snippy-core. Recombinant regions were identified & filtered using Gubbins. A maximum-likelihood phylogeny was inferred using IQ-TREE2 under the selected nucleotide substitution model with ultrafast bootstrap support. The final tree was visualized using ETE3.
