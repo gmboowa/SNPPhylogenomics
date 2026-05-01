@@ -13,9 +13,9 @@ The workflow is designed for bacterial whole-genome sequencing data and is espec
 
 <pre>
 Paired-end FASTQ files
-      ⬇
+⬇
 Trimmomatic read trimming
-      ⬇
+⬇
 FastQC quality control
       ⬇
 Snippy variant calling
