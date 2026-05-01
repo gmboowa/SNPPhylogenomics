@@ -7,10 +7,9 @@ The workflow is designed for bacterial whole-genome sequencing data and is espec
 ---
 
 
-<h2 align="center">Workflow overview</h2>
+## Workflow overview
 
 <div align="center">
-
 <pre>
 Paired-end FASTQ files
 ⬇
@@ -28,6 +27,7 @@ IQ-TREE2 maximum-likelihood phylogeny
 ⬇
 ETE3 tree visualization
 </pre>
+</div>
 ## Main outputs
 
 The workflow produces:
