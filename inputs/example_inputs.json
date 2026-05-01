@@ -1,0 +1,41 @@
+{
+  "SNPPhylogenomics.input_reads": [
+    "~/DRR221025_1.fastq.gz",
+    "~/DRR221025_2.fastq.gz",
+    "~/ERR11748485_1.fastq.gz",
+    "~/ERR11748485_2.fastq.gz",
+    "~/ERR11748486_1.fastq.gz",
+    "~/ERR11748486_2.fastq.gz",
+    "~/ERR11748487_1.fastq.gz",
+    "~/ERR11748487_2.fastq.gz",
+    "~/ERR11748549_1.fastq.gz",
+    "~/ERR11748549_2.fastq.gz",
+    "~/ERR11748502_1.fastq.gz",
+    "~/ERR11748502_2.fastq.gz"
+  ],
+
+  "SNPPhylogenomics.adapters": "~/adapters.fa",
+  "SNPPhylogenomics.reference_genome": "~/GCF_000240185.1_ASM24018v2_genomic.fa",
+  "SNPPhylogenomics.reference_type": "fasta",
+
+  "SNPPhylogenomics.do_trimming": true,
+  "SNPPhylogenomics.do_quality_control": true,
+  "SNPPhylogenomics.do_variant_calling": true,
+  "SNPPhylogenomics.do_phylogeny": true,
+
+  "SNPPhylogenomics.use_gubbins": true,
+  "SNPPhylogenomics.midpoint_root_tree": true,
+
+  "SNPPhylogenomics.iqtree2_model": "GTR+G",
+  "SNPPhylogenomics.iqtree2_bootstraps": 1000,
+
+  "SNPPhylogenomics.max_cpus": 8,
+  "SNPPhylogenomics.max_memory_gb": 16,
+
+  "SNPPhylogenomics.min_read_length": 50,
+  "SNPPhylogenomics.min_mapping_quality": 20,
+
+  "SNPPhylogenomics.tree_width": 4000,
+  "SNPPhylogenomics.tree_height": 3000,
+  "SNPPhylogenomics.tree_image_format": "png"
+}
