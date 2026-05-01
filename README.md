@@ -66,7 +66,7 @@ Tree visualization	ETE3	gmboowa/ete3-render:1.18
 Input JSON structure
 
 Example:
-
+cat > SNPPhylogenomics.json << 'EOF'
 {
   "SNPPhylogenomics.input_reads": [
     "/path/to/sample1_1.fastq.gz",
@@ -100,7 +100,7 @@ Example:
   "SNPPhylogenomics.tree_height": 3000,
   "SNPPhylogenomics.tree_image_format": "png"
 }
-
+EOF
 ## Important input rules
 
 1. Paired reads must be in order
