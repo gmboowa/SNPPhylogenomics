@@ -55,10 +55,10 @@ Docker
 Example Cromwell command:
 
 ```bash
-java -jar ~/cromwell-92.jar run SNPPhylogenomics.wdl --inputs ~/Klebsiella_pneumoniae_phylogeny.json
+java -jar ~/cromwell-92.jar run SNPPhylogenomics.wdl --inputs ~/example_inputs.json
 
 ```
-## 🐳 Docker images used
+## Docker images used
 
 | Step                      | Tool        | Docker image                  |
 |---------------------------|-------------|-------------------------------|
@@ -74,18 +74,18 @@ Input JSON structure
 
 Example:
 
-cat > SNPPhylogenomics.json << 
+cat > example_inputs.json << 
 ```json
 {
   "SNPPhylogenomics.input_reads": [
-    "/path/to/sample1_1.fastq.gz",
-    "/path/to/sample1_2.fastq.gz",
-    "/path/to/sample2_1.fastq.gz",
-    "/path/to/sample2_2.fastq.gz"
+    "~/sample1_1.fastq.gz",
+    "~/sample1_2.fastq.gz",
+    "~/sample2_1.fastq.gz",
+    "~/sample2_2.fastq.gz"
   ],
 
-  "SNPPhylogenomics.adapters": "/path/to/adapters.fa",
-  "SNPPhylogenomics.reference_genome": "/path/to/reference.fasta",
+  "SNPPhylogenomics.adapters": "~/adapters.fa",
+  "SNPPhylogenomics.reference_genome": "~/reference.fasta",
   "SNPPhylogenomics.reference_type": "fasta",
 
   "SNPPhylogenomics.do_trimming": true,
@@ -116,62 +116,75 @@ cat > SNPPhylogenomics.json <<
 
 The workflow expects paired-end reads in strict R1/R2 order:
 
+```bash
 [
   "sample1_1.fastq.gz",
   "sample1_2.fastq.gz",
   "sample2_1.fastq.gz",
   "sample2_2.fastq.gz"
 ]
-
+```
 Do not mix the order.
 
 2. Reference genome format
 
 Use:
-
+```bash
 "SNPPhylogenomics.reference_type": "fasta"
-
+```
 for FASTA references. For phylogeny-only workflows, FASTA is often more stable and sufficient.
 
 ## IQ-TREE2 model options
 
 The model is controlled here:
 
+```bash
 "SNPPhylogenomics.iqtree2_model": "GTR+G"
+```
 
 Common models
-Model	When to use	Notes
-GTR+G	General bacterial SNP phylogeny	Good default
-GTR+I+G	If some sites are invariant	More complex; may improve fit
-GTR+F+G	When empirical base frequencies should be estimated	Useful for biased base composition
-HKY+G	Simpler datasets	Less parameter-rich than GTR
-JC	Very simple testing only	Not recommended for final analysis
-MFP	Let IQ-TREE choose best model	Good for final analysis if runtime is acceptable
+## IQ-TREE2 substitution models
+
+| Model    | When to use                              | Notes                                      |
+|----------|------------------------------------------|--------------------------------------------|
+| GTR+G    | General bacterial SNP phylogeny           | Good default                               |
+| GTR+I+G  | If some sites are invariant               | More complex; may improve fit              |
+| GTR+F+G  | When empirical base frequencies are needed| Useful for biased base composition         |
+| HKY+G    | Simpler datasets                         | Less parameter-rich than GTR               |
+| JC       | Very simple testing only                 | Not recommended for final analysis         |
+| MFP      | Let IQ-TREE choose best model            | Good for final analysis if runtime allows  |
 
 ## Recommended settings
 
 For routine bacterial genomic epidemiology:
 
+```bash
 "SNPPhylogenomics.iqtree2_model": "GTR+G"
-
+```
 ## For model testing:
 
+```bash
 "SNPPhylogenomics.iqtree2_model": "MFP"
-
+```
 Bootstrap settings
 
 Use:
+```bash
 
 "SNPPhylogenomics.iqtree2_bootstraps": 1000
-
+```
 IQ-TREE2 ultrafast bootstrap requires at least 1000 replicates.
 
 Recommended:
 
-Use case	Bootstrap value
-Quick testing	1000
-Standard publication	1000
-More rigorous analysis	2000
+## Bootstrap settings
+
+| Use case               | Bootstrap value |
+|------------------------|-----------------|
+| Quick testing          | 1000            |
+| Standard publication   | 1000            |
+| More rigorous analysis | 2000            |
+
 Tree output format
 
 The image format is controlled by:
@@ -180,9 +193,13 @@ The image format is controlled by:
 
 Supported options:
 
+```bash
+
 "png"
 "svg"
 "pdf"
+
+```
 Recommended
 
 For reports and dashboards:
@@ -197,17 +214,23 @@ Recommended PNG resolution
 
 For high-quality PNG output:
 
+```bash
+
 "SNPPhylogenomics.tree_width": 4000,
 "SNPPhylogenomics.tree_height": 3000
+```
 
 For very high-quality output:
 
+```bash
 "SNPPhylogenomics.tree_width": 5000,
 "SNPPhylogenomics.tree_height": 3500
-
+```
 Running the workflow
-java -jar ~/cromwell-92.jar run SNPPhylogenomics.wdl --inputs ~/Klebsiella_pneumoniae_phylogeny.json
 
+```bash
+java -jar ~/cromwell-92.jar run SNPPhylogenomics.wdl --inputs ~/example_inputs.json
+```
 Finding outputs
 
 After completion:
@@ -218,16 +241,16 @@ find cromwell-executions -name "phylogenetic_tree.png"
 find cromwell-executions -name "phylogenetic_tree.cleaned.nwk"
 
 Key output files
-File	Description
-core.full.aln	Full core genome alignment from snippy-core
-core.aln	Core SNP alignment
-core.vcf	Combined core variant calls
-gubbins.filtered_polymorphic_sites.fasta	Recombination-filtered alignment
-final.treefile	Final Newick tree from IQ-TREE2
-phylogenetic_tree.png	Rendered tree image
-phylogenetic_tree.cleaned.nwk	Cleaned tree used for visualization
-Troubleshooting
-IQ-TREE2 error: #replicates must be >= 1000
+
+| File | Description |
+|------|-------------|
+| core.full.aln | Full core genome alignment from Snippy-core |
+| core.aln | Core SNP alignment |
+| core.vcf | Combined core variant calls |
+| gubbins.filtered_polymorphic_sites.fasta | Recombination-filtered alignment |
+| final.treefile | Final Newick tree from IQ-TREE2 |
+| phylogenetic_tree.png | Rendered tree image |
+| phylogenetic_tree.cleaned.nwk | Cleaned tree used for visualization |
 
 Set:
 
