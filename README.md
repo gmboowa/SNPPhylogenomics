@@ -1,8 +1,9 @@
 # SNPPhylogenomics
 
-**SNPPhylogenomics** is a reproducible, containerized WDL/Cromwell workflow for SNP-based bacterial phylogenomics. It performs read trimming, quality control, reference-based variant calling, core-genome alignment generation, optional recombination filtering, maximum-likelihood phylogeny reconstruction, and tree visualization.
+SNPPhylogenomics is a reproducible, containerized WDL/Cromwell workflow for SNP-based bacterial phylogenomics. It performs read trimming, quality control, reference-based variant calling, core-genome alignment generation, optional recombination filtering, maximum-likelihood phylogeny reconstruction, and tree visualization.
 
 The workflow is designed for bacterial whole-genome sequencing data and is especially useful for genomic epidemiology, outbreak investigations, antimicrobial resistance surveillance, and comparative pathogen genomics.
+
 ---
 
 
