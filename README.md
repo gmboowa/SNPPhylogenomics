@@ -6,9 +6,12 @@ The workflow is designed for bacterial whole-genome sequencing data and is espec
 
 ---
 
-## Workflow overview
 
-```text
+<h2 align="center">Workflow overview</h2>
+
+<div align="center">
+
+<pre>
 Paired-end FASTQ files
         ↓
 Trimmomatic read trimming
@@ -24,8 +27,9 @@ Optional Gubbins recombination filtering
 IQ-TREE2 maximum-likelihood phylogeny
         ↓
 ETE3 tree visualization
+</pre>
 
-```
+</div>
 ## Main outputs
 
 The workflow produces:
