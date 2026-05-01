@@ -376,7 +376,7 @@ task IQTREE2_PHYLOGENY {
     cpu: cpu
     memory: "~{memory_gb} GB"
     disks: "local-disk 100 HDD"
-    timeout: "48 hours"
+    timeout: "200 hours"
   }
 
   output {
