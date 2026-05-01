@@ -17,15 +17,15 @@ Paired-end FASTQ files
 Trimmomatic read trimming
 ⬇
 FastQC quality control
-      ⬇
+⬇
 Snippy variant calling
-      ⬇
+⬇
 snippy-core core genome alignment
-      ⬇
+⬇
 Optional Gubbins recombination filtering
-      ⬇
+⬇
 IQ-TREE2 maximum-likelihood phylogeny
-      ⬇
+⬇
 ETE3 tree visualization
 </pre>
 ## Main outputs
