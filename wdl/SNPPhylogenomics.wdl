@@ -392,7 +392,7 @@ task TREE_VISUALIZATION {
     Int width = 1800
     Int height = 1400
     String image_format = "png"
-    String title = "SNPPhylogenomics."
+    String title = "Phylogenetic tree"
   }
 
   command <<<
@@ -406,77 +406,124 @@ from pathlib import Path
 import sys
 
 tree_path = Path("~{input_tree}")
-out_img = Path("tree_visualization/phylogenetic_tree.~{image_format}")
-out_tree = Path("tree_visualization/phylogenetic_tree.cleaned.nwk")
+out_png = Path("tree_visualization/phylogenetic_tree.~{image_format}")
 log = Path("tree_visualization/render.log")
 
 try:
-    from ete3 import Tree, TreeStyle, NodeStyle
+    from ete3 import Tree, TreeStyle, TextFace, NodeStyle, faces
 
     t = Tree(str(tree_path), format=1)
 
-    # 1. Remove Reference from final display only
-    for leaf in t.get_leaves():
-        if leaf.name.lower() == "reference":
+    # Remove Reference from visualization only.
+    for leaf in list(t.get_leaves()):
+        if leaf.name.strip().lower() == "reference":
             leaf.detach()
 
-    # 2. Convert bootstrap labels from proportions to percentages if needed
+    n_leaves = max(1, len(t.get_leaves()))
+
+    # Auto-scale sample ID and bootstrap font sizes based on number of displayed samples.
+    if n_leaves <= 10:
+        leaf_font = 10
+        support_font = 7
+        node_size = 5
+        render_width = min(~{width}, 1100)
+        render_height = min(~{height}, max(420, n_leaves * 60 + 120))
+    elif n_leaves <= 25:
+        leaf_font = 9
+        support_font = 6
+        node_size = 4
+        render_width = min(~{width}, 1400)
+        render_height = max(~{height}, n_leaves * 34 + 140)
+    elif n_leaves <= 75:
+        leaf_font = 7
+        support_font = 5
+        node_size = 3
+        render_width = max(~{width}, 1600)
+        render_height = max(~{height}, n_leaves * 24 + 140)
+    elif n_leaves <= 150:
+        leaf_font = 6
+        support_font = 4
+        node_size = 2
+        render_width = max(~{width}, 2000)
+        render_height = max(~{height}, n_leaves * 18 + 140)
+    else:
+        leaf_font = 5
+        support_font = 3
+        node_size = 1
+        render_width = max(~{width}, 2400)
+        render_height = max(~{height}, n_leaves * 14 + 140)
+
+    ns = NodeStyle()
+    ns["size"] = node_size
+    ns["vt_line_width"] = 1
+    ns["hz_line_width"] = 1
+
     for node in t.traverse():
-        if not node.is_leaf():
-            try:
-                support = float(node.support)
-                if 0 < support <= 1:
-                    node.support = round(support * 100)
-                else:
-                    node.support = round(support)
-            except Exception:
-                pass
-
-    # Save cleaned tree used for figure
-    t.write(outfile=str(out_tree), format=1)
-
-    # 3. Style tree
-    ts = TreeStyle()
-    ts.show_leaf_name = True
-    ts.show_branch_support = True
-
-    # 4. Hide confusing large scale bar
-    ts.show_scale = False
-
-    # 5. No title added to the rendered image
-
-    ts.margin_left = 20
-    ts.margin_right = 20
-    ts.margin_top = 20
-    ts.margin_bottom = 20
-
-    # Smaller, cleaner nodes
-    for node in t.traverse():
-        ns = NodeStyle()
-        ns["size"] = 4
         node.set_style(ns)
 
-    t.render(str(out_img), w=~{width}, units="px", tree_style=ts)
+    def layout(node):
+        if node.is_leaf():
+            name_face = TextFace(node.name, fsize=leaf_font)
+            name_face.margin_left = 4
+            faces.add_face_to_node(name_face, node, column=0, position="branch-right")
+        else:
+            if getattr(node, "support", None) is not None and float(node.support) > 0:
+                support_raw = float(node.support)
+
+                # ETE3 may store IQ-TREE support as 1.0 instead of 100.
+                if support_raw <= 1:
+                    support_value = round(support_raw * 100)
+                else:
+                    support_value = round(support_raw)
+
+                support_face = TextFace(str(support_value) + "%", fsize=support_font, fgcolor="darkred")
+                support_face.margin_right = 2
+                faces.add_face_to_node(support_face, node, column=0, position="branch-top")
+
+    ts = TreeStyle()
+    ts.show_leaf_name = False
+    ts.show_branch_support = False
+    ts.show_scale = True
+    ts.layout_fn = layout
+
+    # Keep the WDL input 'title' for compatibility with the workflow call,
+    # but do not render it on the figure.
+    # ts.title.add_face(TextFace("~{title}", fsize=13, bold=True), column=0)
+
+    ts.margin_left = 10
+    ts.margin_right = 10
+    ts.margin_top = 5
+    ts.margin_bottom = 10
+    ts.branch_vertical_margin = 8 if n_leaves <= 25 else 3
+
+    # Do not force both width and height, because that can stretch/skew labels.
+    # Let ETE3 calculate the height naturally.
+    t.render(str(out_png), w=render_width, units="px", tree_style=ts)
 
     log.write_text(
-        "Rendered cleaned phylogenetic tree\\n"
-        "Reference removed from display\\n"
-        "Bootstrap values converted from proportions to percentages when needed\\n"
-        "Scale bar hidden\\n"
-        "Title intentionally omitted from image\\n"
+        "Rendered with ete3\n"
+        "Figure title rendered: no\n"
+        "Reference removed from visualization: yes\n"
+        "Bootstrap/support values displayed as percent: yes\n"
+        f"Number of samples displayed: {n_leaves}\n"
+        f"Leaf font size: {leaf_font}\n"
+        f"Support font size: {support_font}\n"
+        f"Node size: {node_size}\n"
+        f"Image width: {render_width}px\n"
+        "Image height: auto-calculated by ETE3\n"
     )
 
 except Exception as e:
-    log.write_text(f"ETE3 rendering failed: {e}\\n")
+    log.write_text(f"ETE3 rendering failed: {e}\n")
     try:
         from PIL import Image, ImageDraw
         img = Image.new("RGB", (~{width}, ~{height}), "white")
         d = ImageDraw.Draw(img)
         d.text((30, 30), "Tree rendering failed. Newick tree file was generated successfully.", fill="black")
         d.text((30, 80), str(e), fill="red")
-        img.save(out_img)
+        img.save(out_png)
     except Exception as e2:
-        sys.stderr.write(f"Failed to create fallback image: {e2}\\n")
+        sys.stderr.write(f"Failed to create fallback image: {e2}\n")
         raise
 PY
   >>>
@@ -490,7 +537,6 @@ PY
 
   output {
     File tree_image = "tree_visualization/phylogenetic_tree.~{image_format}"
-    File cleaned_tree = "tree_visualization/phylogenetic_tree.cleaned.nwk"
     File render_log = "tree_visualization/render.log"
   }
 }
