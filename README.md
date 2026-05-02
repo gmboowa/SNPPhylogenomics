@@ -113,7 +113,7 @@ Example:
 ````
 ## Important input rules
 
-1. Paired reads must be in order
+1. **Paired reads must be in order**
 
 The workflow expects paired-end reads in strict R1/R2 order:
 
@@ -127,7 +127,7 @@ The workflow expects paired-end reads in strict R1/R2 order:
 ```
 Do not mix the order.
 
-2. Reference genome format
+2. **Reference genome format**
 
 Use:
 ```bash
