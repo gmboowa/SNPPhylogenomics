@@ -86,8 +86,8 @@ Example:
   ],
 
   "SNPPhylogenomics.adapters": "~/adapters.fa",
-  "SNPPhylogenomics.reference_genome": "~/reference.fasta",
-  "SNPPhylogenomics.reference_type": "fasta",
+  "SNPPhylogenomics.reference_genome": "~/reference.gbk",
+  "SNPPhylogenomics.reference_type": "genbank",
 
   "SNPPhylogenomics.do_trimming": true,
   "SNPPhylogenomics.do_quality_control": true,
@@ -131,9 +131,9 @@ Do not mix the order.
 
 Use:
 ```bash
-"SNPPhylogenomics.reference_type": "fasta"
+"SNPPhylogenomics.reference_type": "genbank"
 ```
-for FASTA references. For phylogeny-only workflows, FASTA is often more stable and sufficient.
+For phylogeny-only workflows, Genbank is often more stable and sufficient.
 
 ## IQ-TREE2 model options
 
