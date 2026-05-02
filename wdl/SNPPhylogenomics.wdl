@@ -206,6 +206,19 @@ task SNIPPY_CORE {
     set -euo pipefail
     mkdir -p snippy_results snippy_core
 
+    # Copy the Cromwell-localized GenBank reference to a simple local path.
+    cp "~{reference_genome}" reference_input.gbk
+
+    if [ ! -s reference_input.gbk ]; then
+      echo "ERROR: reference_input.gbk is missing or empty." >&2
+      exit 1
+    fi
+
+    if ! grep -q '^LOCUS' reference_input.gbk; then
+      echo "ERROR: reference_input.gbk does not look like a valid GenBank file." >&2
+      exit 1
+    fi
+
     files=(~{sep=' ' input_reads})
     n=${#files[@]}
 
@@ -227,7 +240,7 @@ task SNIPPY_CORE {
       snippy \
         --cpus ~{cpu} \
         --minqual ~{min_quality} \
-        --ref "~{reference_genome}" \
+        --ref reference_input.gbk \
         --R1 "$R1" \
         --R2 "$R2" \
         --outdir "$outdir" \
@@ -237,8 +250,10 @@ task SNIPPY_CORE {
       echo -e "${sample}\tsuccess\t${outdir}/${sample}.vcf\t${outdir}/${sample}.aligned.fa" >> variant_summary.tsv
     done
 
+    # Build the core alignment from completed Snippy result folders.
+    # For this Snippy version, snippy-core requires --ref.
     snippy-core \
-      --ref "~{reference_genome}" \
+      --ref reference_input.gbk \
       --prefix snippy_core/core \
       snippy_results/*
 
@@ -290,7 +305,6 @@ HTML
     File core_vcf = "snippy_core/core.vcf"
   }
 }
-
 task GUBBINS_RECOMBINATION {
   input {
     File core_full_alignment
@@ -346,8 +360,8 @@ task GUBBINS_RECOMBINATION {
 task IQTREE2_PHYLOGENY {
   input {
     File alignment
-    String model = "GTR+G"
-    Int bootstrap_replicates = 100
+    String model = "GTR+ASC"
+    Int bootstrap_replicates = 1000
     Int cpu = 8
     Int memory_gb = 16
     Boolean midpoint_root_tree = true
@@ -362,13 +376,19 @@ task IQTREE2_PHYLOGENY {
     iqtree2 \
       -s iqtree/phylogeny_alignment.fasta \
       -m ~{model} \
-      -bb ~{bootstrap_replicates} \
+      -B ~{bootstrap_replicates} \
+      -alrt ~{bootstrap_replicates} \
+      -bnni \
       -nt ~{cpu} \
       -pre iqtree/SNPPhylogenomics_phylogeny
 
-    # The staphb/iqtree2 container does not include python3.
-    # Keep the IQ-TREE2 output tree as final.treefile for downstream visualization.
+    # Write final tree with full IQ-TREE node support labels preserved.
+    # With -B and -alrt, labels are UFBoot/SH-aLRT, e.g. 100/100 or 73.8/11.
     cp iqtree/SNPPhylogenomics_phylogeny.treefile iqtree/final.treefile
+
+    # Sanity-check support labels written by IQ-TREE2.
+    grep -oE '\)[0-9]+(\.[0-9]+)?(/[0-9]+(\.[0-9]+)?)?:' \
+      iqtree/final.treefile > iqtree/support_labels.txt || true
   >>>
 
   runtime {
@@ -384,6 +404,7 @@ task IQTREE2_PHYLOGENY {
     File raw_tree = "iqtree/SNPPhylogenomics_phylogeny.treefile"
     File iqtree_log = "iqtree/SNPPhylogenomics_phylogeny.log"
     File iqtree_report = "iqtree/SNPPhylogenomics_phylogeny.iqtree"
+    File support_labels = "iqtree/support_labels.txt"
   }
 }
 task TREE_VISUALIZATION {
@@ -404,6 +425,7 @@ task TREE_VISUALIZATION {
     python3 - <<'PY'
 from pathlib import Path
 import sys
+import re
 
 tree_path = Path("~{input_tree}")
 out_png = Path("tree_visualization/phylogenetic_tree.~{image_format}")
@@ -421,7 +443,6 @@ try:
 
     n_leaves = max(1, len(t.get_leaves()))
 
-    # Auto-scale sample ID and bootstrap font sizes based on number of displayed samples.
     if n_leaves <= 10:
         leaf_font = 10
         support_font = 7
@@ -461,22 +482,47 @@ try:
     for node in t.traverse():
         node.set_style(ns)
 
+    def clean_support_label(value):
+        value = str(value).strip()
+        if not value:
+            return ""
+
+        # IQ-TREE may output dual support labels as UFBoot/SH-aLRT.
+        # For a clean publication-style tree, display ONLY the bootstrap value.
+        # Example: 100/100 -> 100; 73.7/25 -> 74; 18.4/31 -> 18.
+        if "/" in value:
+            value = value.split("/")[0].strip()
+
+        try:
+            x = float(value)
+
+            # ETE3 may store some support values as 0-1 instead of 0-100.
+            if x <= 1:
+                x = x * 100
+
+            # Display as a single integer bootstrap support value.
+            return str(int(round(x)))
+        except Exception:
+            return value
+
     def layout(node):
         if node.is_leaf():
             name_face = TextFace(node.name, fsize=leaf_font)
             name_face.margin_left = 4
             faces.add_face_to_node(name_face, node, column=0, position="branch-right")
         else:
-            if getattr(node, "support", None) is not None and float(node.support) > 0:
-                support_raw = float(node.support)
+            support_text = ""
 
-                # ETE3 may store IQ-TREE support as 1.0 instead of 100.
-                if support_raw <= 1:
-                    support_value = round(support_raw * 100)
-                else:
-                    support_value = round(support_raw)
+            # IQ-TREE combined labels such as 100/100 are usually stored in node.name.
+            if getattr(node, "name", None) and str(node.name).strip():
+                support_text = str(node.name).strip()
+            elif getattr(node, "support", None) is not None and float(node.support) > 0:
+                support_text = str(node.support)
 
-                support_face = TextFace(str(support_value) + "%", fsize=support_font, fgcolor="darkred")
+            support_label = clean_support_label(support_text)
+
+            if support_label:
+                support_face = TextFace(support_label, fsize=support_font, fgcolor="darkred")
                 support_face.margin_right = 2
                 faces.add_face_to_node(support_face, node, column=0, position="branch-top")
 
@@ -496,15 +542,14 @@ try:
     ts.margin_bottom = 10
     ts.branch_vertical_margin = 8 if n_leaves <= 25 else 3
 
-    # Do not force both width and height, because that can stretch/skew labels.
-    # Let ETE3 calculate the height naturally.
     t.render(str(out_png), w=render_width, units="px", tree_style=ts)
 
     log.write_text(
         "Rendered with ete3\n"
         "Figure title rendered: no\n"
         "Reference removed from visualization: yes\n"
-        "Bootstrap/support values displayed as percent: yes\n"
+        "Only bootstrap support value displayed: yes\n"
+        "Displayed support format: single integer bootstrap value\n"
         f"Number of samples displayed: {n_leaves}\n"
         f"Leaf font size: {leaf_font}\n"
         f"Support font size: {support_font}\n"
