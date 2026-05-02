@@ -34,23 +34,23 @@ ETE3 tree visualization
 
 The workflow produces:
 
-▪ Trimmed FASTQ files
-▪ FastQC reports
-▪ Per-sample Snippy variant calls
-▪ core.full.aln
-▪ core.aln
-▪ core.vcf
-▪ Optional Gubbins recombination-filtered alignment
-▪ IQ-TREE2 Newick tree
-▪ Tree visualization as PNG or SVG
+▪ Trimmed FASTQ files<br>
+▪ FastQC reports<br>
+▪ Per-sample Snippy variant calls<br>
+▪ core.full.aln<br>
+▪ core.aln<br>
+▪ core.vcf<br>
+▪ Optional Gubbins recombination-filtered alignment<br>
+▪ IQ-TREE2 Newick tree<br>
+▪ Tree visualization as PNG or SVG<br>
 ▪ Cleaned Newick tree for downstream tools such as iTOL
 
 Requirements
 
 Install the following:
 
-▪ Java
-▪ Cromwell
+▪ Java<br>
+▪ Cromwell<br>
 ▪ Docker
 
 Example Cromwell command:
