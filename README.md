@@ -262,7 +262,7 @@ Recommended:
 | Use case               | Bootstrap value |
 |------------------------|-----------------|
 | Quick testing          | 1000            |
-| Standard publication   | 1000            |
+| Standard    | 1000            |
 | More rigorous analysis | 2000            |
 
 Tree output format
