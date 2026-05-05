@@ -1,0 +1,5 @@
+version: 1.2
+workflows:
+  - name: SNPPhylogenomics
+    subclass: WDL
+    primaryDescriptorPath: /wdl/SNPPhylogenomics.wdl
